@@ -19,12 +19,16 @@
 #define THREAD_R5_SEC_0_TX_HI		7
 
 #define TISCI_MSG_SYS_RESET		0x0005
+#define TISCI_MSG_SET_DEVICE		0x0200
 #define TISCI_MSG_SET_FWL_REGION	0x9000
 #define TISCI_MSG_PROC_REQUEST		0xc000
 
 #define TISCI_MSG_FLAG_AOP		(1 << 1)
 
 #define TISCI_MSG_FLAG_ACK		(1 << 1)
+
+#define AM6_DEV_MCU_RTIX		(134 + RTI_MODULE)
+#define DEVICE_SW_STATE_ON		2
 
 #define FWL_MCU_ARMSS0_CORE0_SLV	1024
 #define FWL_CTRL_LOCK			(1 << 4)
@@ -85,6 +89,13 @@ wait:	subs	r0, #1
 	 */
 	ands	r0, #TISCI_MSG_FLAG_ACK
 	beq	get_proc
+
+	/*
+	 * Ensure that RTI1 stays powered-on.
+	 */
+	adr	r0, set_device_msg
+	adr	r1, set_device_msg_end
+	bl	send_msg
 
 	/*
 	 * Enable firewall for MCU_ARMSS0_CORE0_SLV interface.
@@ -163,6 +174,18 @@ proc_req_msg:
 	.byte	PROC_R5_0
 	.byte	0, 0, 0		/* padding */
 proc_req_msg_end:
+
+set_device_msg:
+	.word	0		/* secure header */
+	.short	TISCI_MSG_SET_DEVICE
+	.byte	HOST_R5_SEC_0
+	.byte	0		/* seq */
+	.word	TISCI_MSG_FLAG_AOP
+	.word	AM6_DEV_MCU_RTIX
+	.word	0		/* reserved */
+	.byte	DEVICE_SW_STATE_ON
+	.byte	0, 0, 0		/* padding */
+set_device_msg_end:
 
 set_fwl_region_msg:
 	.word	0		/* secure header */
