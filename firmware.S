@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 /*
- * Copyright (c) Siemens AG, 2020
+ * Copyright (c) Siemens AG, 2020-2021
  *
  * Authors:
  *   Jan Kiszka <jan.kiszka@siemens.com>
@@ -210,3 +210,10 @@ sys_reset_msg:
 	.byte	0		/* seq */
 	.word	TISCI_MSG_FLAG_AOP
 sys_reset_msg_end:
+
+/* Resource table */
+	.section ".resource_table", "a"
+
+	.word	1		/* version */
+	.word	0		/* number of entries */
+	.word	0, 0		/* reserved */
