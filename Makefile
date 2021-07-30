@@ -11,7 +11,7 @@ CC = gcc
 RTI_MODULE = 1
 
 CFLAGS = -mcpu=cortex-r5 -DRTI_MODULE=$(RTI_MODULE)
-LDFLAGS = -nostdlib -N -Wl,-strip-all -static
+LDFLAGS = -nostdlib -N -Wl,-strip-all -Wl,--build-id -static
 
 k3-rti-wdt.fw: lscript.lds firmware.o
 	$(CROSS_COMPILE)$(CC) -o $@ -T $^ $(LDFLAGS)
