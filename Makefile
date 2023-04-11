@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0
 #
-# Copyright (c) Siemens AG, 2020-2021
+# Copyright (c) Siemens AG, 2020-2023
 #
 # Authors:
 #   Jan Kiszka <jan.kiszka@siemens.com>
@@ -11,7 +11,7 @@ CC = gcc
 RTI_MODULE = 1
 
 CFLAGS = -mcpu=cortex-r5 -DRTI_MODULE=$(RTI_MODULE)
-LDFLAGS = -nostdlib -N -Wl,-strip-all -Wl,--build-id -static
+LDFLAGS = -nostdlib -N -Wl,-strip-all -Wl,--build-id -static -Wl,--nmagic
 
 k3-rti-wdt.fw: lscript.lds firmware.o
 	$(CROSS_COMPILE)$(CC) -o $@ -T $^ $(LDFLAGS)
