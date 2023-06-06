@@ -1,9 +1,10 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 /*
- * Copyright (c) Siemens AG, 2020-2021
+ * Copyright (c) Siemens AG, 2020-2023
  *
  * Authors:
  *   Jan Kiszka <jan.kiszka@siemens.com>
+ *   Li Huaqian <huaqian.li@siemens.com>
  */
 
 #define VIM_VEC_INT			0x40f82000
@@ -11,6 +12,15 @@
 
 #define SEC_PROXY_STATUS		0x2a380000
 #define SEC_PROXY_MSG_DATA		0x2a480004
+
+#if defined(PON_REASON_BASE_ADDR)
+#define PON_REASON_SOF_ADDR     	PON_REASON_BASE_ADDR
+#define PON_REASON_MAGIC_ADDR   	(4 + PON_REASON_BASE_ADDR)
+#define PON_REASON_EOF_ADDR     	(8 + PON_REASON_BASE_ADDR)
+#define PON_REASON_SOF_NUM      	0xBBBBCCCC
+#define PON_REASON_MAGIC_NUM    	0xDDDDDDDD
+#define PON_REASON_EOF_NUM      	0xCCCCBBBB
+#endif
 
 #define HOST_R5_SEC_0			4
 #define PROC_R5_0			1
@@ -157,6 +167,22 @@ rx_wt:	ldr	r4, [r2]
  * Reset system via TISCI
  */
 sys_reset:
+#if defined(PON_REASON_BASE_ADDR)
+	/* Record the PON REASON in memory */
+	ldr r2, =PON_REASON_SOF_ADDR
+	ldr r3, =PON_REASON_SOF_NUM
+	str r3, [r2]
+
+	ldr r2, =PON_REASON_MAGIC_ADDR
+	ldr r3, =PON_REASON_MAGIC_NUM
+	str r3, [r2]
+
+	ldr r2, =PON_REASON_EOF_ADDR
+	ldr r3, =PON_REASON_EOF_NUM
+	str r3, [r2]
+	dsb
+#endif
+
 	adr	r0, sys_reset_msg
 	adr	r1, sys_reset_msg_end
 	bl	send_msg

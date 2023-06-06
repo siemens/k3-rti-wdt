@@ -25,6 +25,11 @@ call `make`.
 By default, the firmware supports RTI1 as this is known to work fine on the
 AM65x. To build it for RTI0, compile it via `make RTI_MODULE=0`.
 
+By default, the firmware also supports to save watchdog reset cause to RAM at
+0xA2200000. To build it for other RAM locations, compile it via
+`make PON_REASON_BASE_ADDR=<addr>`. To build it for disabling the saving watchdog
+reset cause, compile it via `make PON_REASON_BASE_ADDR=-1`.
+
 
 Usage
 -----
